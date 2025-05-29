@@ -74,7 +74,7 @@ class CyberEscape(QWidget):
             bouton_niveau = QPushButton(niveau)
             bouton_niveau.setFixedSize(120, 35)
             if i == 0:
-                bouton_niveau.setStyleSheet("background-color: #4CAF50; color: white; border-radius: 5px; font-size: 14px;")
+                bouton_niveau.setStyleSheet("background-color: #FFCC33; border-radius: 5px; font-size: 14px;")
                 bouton_niveau.clicked.connect(self.ouvrir_formulaire)  # Clique sur Niveau 1
             else:
                 bouton_niveau.setStyleSheet("background-color: #FFCC33; border-radius: 5px; font-size: 14px;")
