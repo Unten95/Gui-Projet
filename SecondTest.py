@@ -20,6 +20,11 @@ class CyberEscape(QWidget):
         self.setWindowTitle("Cyberescape")
         self.setFixedSize(500, 500)
 
+        self.labels_temps = {}
+        self.temps_debut_niveaux = {}
+        self.boutons_niveaux = {}
+
+
         self.textes_niveaux = {
         "Niveau 1": ("Bienvenue dans le premier niveau !", "Vous apprendrez à détecter des mails frauduleux."),
         "Niveau 2": ("Ce niveau teste votre mémoire.", "Vous devrez retenir un mot de passe complexe."),
@@ -72,9 +77,13 @@ class CyberEscape(QWidget):
                 bouton_niveau.setStyleSheet("background-color: #4CAF50; color: white; border-radius: 5px; font-size: 14px;")
                 bouton_niveau.clicked.connect(self.ouvrir_formulaire)  # Clique sur Niveau 1
             else:
-                bouton_niveau.setStyleSheet("background-color: #f0f0f0; border-radius: 5px; font-size: 14px;")
+                bouton_niveau.setStyleSheet("background-color: #FFCC33; border-radius: 5px; font-size: 14px;")
             
-            label_temps = QLabel("3 min 07") if i == 0 else QLabel("")
+            label_temps = QLabel(f"Temps :")
+            self.labels_temps[niveau] = label_temps
+            self.boutons_niveaux[niveau] = bouton_niveau
+
+
             radio_bouton = QRadioButton()
             radio_bouton.toggled.connect(lambda checked, n=niveau, r=radio_bouton: self.verifier_mot_de_passe(n, r) if checked else None)
             
@@ -122,6 +131,9 @@ class CyberEscape(QWidget):
         self.fenetre_info = FenetreInfo(texte_intro, texte_plus)
         self.fenetre_info.show()
 
+        if niveau not in self.temps_debut_niveaux:
+            self.temps_debut_niveaux[niveau] = QTime.currentTime()
+
     def mettre_a_jour_chronometre(self):
         if self.secondes_restantes > 0:
             self.secondes_restantes -= 1
@@ -147,6 +159,30 @@ class CyberEscape(QWidget):
         if ok:
             if mot_saisi == mot_de_passe_correct:
                 bouton_radio.setChecked(True)
+                 # Calcule le temps passé dans le niveau
+                temps_debut = self.temps_debut_niveaux.get(niveau, QTime.currentTime())
+                temps_actuel = QTime.currentTime()
+                secondes_passees = temps_debut.secsTo(temps_actuel)
+
+                heures = secondes_passees // 3600
+                minutes = (secondes_passees % 3600) // 60
+                secondes = secondes_passees % 60
+                texte_temps = f"✔ Fini en {heures:02d}:{minutes:02d}:{secondes:02d}"
+
+
+                # Met à jour la couleur du bouton de niveau en vert
+                bouton_niveau = self.boutons_niveaux.get(niveau)
+                if bouton_niveau:
+                    bouton_niveau.setStyleSheet("""
+                        background-color: #4CAF50;
+                        color: white;
+                        border-radius: 5px;
+                        font-size: 14px;
+                        font-weight: bold;
+                    """)
+
+
+                self.mettre_a_jour_label_temps(niveau, texte_temps)
                 bouton_radio.setStyleSheet("""
                     background-color: #4CAF50;  /* Vert lorsque correct */
                     color: white;  /* Texte en blanc */
@@ -162,6 +198,7 @@ class CyberEscape(QWidget):
                     font-weight: bold;
                 """)
                 bouton_radio.setEnabled(False)  # Empêche de cliquer à nouveau
+                
             else:
                 QMessageBox.warning(self, "Erreur", "Mot de passe incorrect.")
                 bouton_radio.setChecked(False)
@@ -169,7 +206,11 @@ class CyberEscape(QWidget):
     def ouvrir_formulaire(self):
         self.formulaire = FormulaireInscription()
         self.formulaire.show()
-    
+
+    def mettre_a_jour_label_temps(self, niveau, nouveau_texte):
+        if niveau in self.labels_temps:
+            self.labels_temps[niveau].setText(nouveau_texte)
+
  
 
  
