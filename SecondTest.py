@@ -56,10 +56,35 @@ class CyberEscape(QWidget):
         # Player vidéo
         self.player = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         # Label vidéo
-        self.label_video = QLabel("Vidéo\nd'explications", self)
-        self.label_video.setAlignment(Qt.AlignCenter)
+        # Bouton vert pour lancer la vidéo d'explication
+        bouton_video = QPushButton("▶")
+        bouton_video.setFixedSize(35, 35)
+        bouton_video.setStyleSheet("""
+            background-color: #4CAF50;  /* Vert */
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            border-radius: 17px;
+        """)
+        bouton_video.pressed.connect(lambda: bouton_video.setStyleSheet("""
+            background-color: #388E3C;  /* Vert foncé pressé */
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            border-radius: 17px;
+        """))
+        bouton_video.released.connect(lambda: bouton_video.setStyleSheet("""
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+                                                                         
+            border-radius: 17px;
+        """))
+        bouton_video.clicked.connect(lambda: self.lancer_video("C:/Users/Goku9/.vscode/Gui-Projet/ILOVE.mp4"))  # remplace par ton chemin
+        bouton_video.setToolTip("Vidéo d'explication")
         video_layout = QHBoxLayout()
-        video_layout.addWidget(self.label_video)
+        video_layout.addWidget(bouton_video)
         # Liste des niveaux
         niveaux = ["Niveau 1", "Niveau 2", "Niveau 3", "Niveau 4", "Niveau 5"]
         self.layout_niveaux = QVBoxLayout()
