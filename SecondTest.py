@@ -5,14 +5,20 @@ from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtCore import QTimer, QTime
 from fenetreMDP import FenetreMotDePasse
-from PyQt5.QtWidgets import QInputDialog, QMessageBox,QLineEdit
+from PyQt5.QtWidgets import QInputDialog, QMessageBox, QLineEdit
 from PyQt5.QtWidgets import QInputDialog, QMessageBox
 from PyQt5.QtGui import QPalette
+from fenetreOSINT import FenetreOsint
+from fenetreRAMS import FenetreNiveau4
+from fenetreSpoofing import FenetreSpoofing
+
+
 
 from formulaire import FormulaireInscription
 
 from AstuceWindow import FenetreInfo
 from VideoWindow import FenetreVideo
+
 
 class CyberEscape(QWidget):
     def __init__(self):
@@ -24,26 +30,26 @@ class CyberEscape(QWidget):
         self.temps_debut_niveaux = {}
         self.boutons_niveaux = {}
 
-
         self.textes_niveaux = {
-        "Niveau 1": ("Bienvenue dans le premier niveau !", "Vous apprendrez à détecter des mails frauduleux."),
-        "Niveau 2": ("Ce niveau teste votre mémoire.", "Vous devrez retenir un mot de passe complexe."),
-        "Niveau 3": ("Un défi réseau vous attend.", "Configurez un pare-feu pour bloquer les attaques."),
-        "Niveau 4": ("Bienvenue dans la cryptographie.", "Décryptez un message codé en César."),
-        "Niveau 5": ("Le défi final approche !", "Protégez un système complet contre une attaque.")
+            "Niveau 1": ("Bienvenue dans le premier niveau !", "Vous apprendrez à détecter des mails frauduleux."),
+            "Niveau 2": ("Ce niveau teste votre mémoire.", "Vous devrez retenir un mot de passe complexe."),
+            "Niveau 3": ("Un défi réseau vous attend.", "Configurez un pare-feu pour bloquer les attaques."),
+            "Niveau 4": ("🧩 Mission : Bienvenue dans la Cryptographie !" , "🔐 Un employé d'une grande banque a téléchargé par erreur un fichier exécutable à partir d’un site de streaming. Ce fichier contenait un ransomware qui a chiffré tous les documents confidentiels de l’entreprise. \n💻 Votre mission est cruciale : retracer les étapes de l'attaque pour comprendre comment les données ont été chiffrées, et tenter de retrouver la clé de déchiffrement."),
+            "Niveau 5": ("Le défi final approche !", "Protégez un système complet contre une attaque.")
         }
 
         self.mots_de_passe_niveaux = {
-        "Niveau 1": "cyber01",
-        "Niveau 2": "cyber02",
-        "Niveau 3": "cyber03",
-        "Niveau 4": "cyber04",
-        "Niveau 5": "cyber05"
+            "Niveau 1": "cyber01",
+            "Niveau 2": "cyber02",
+            "Niveau 3": "cyber03",
+            "Niveau 4": "cyber04",
+            "Niveau 5": "cyber05"
         }
 
         # Créer un QLabel pour afficher l'image du logo
         self.logo_label = QLabel(self)
-        self.logo_pixmap = QPixmap("C:\\Users\\Goku9\\.vscode\\Gui-Projet\\CyberEscape2.png")  # Remplacez par le chemin réel de votre logo
+        self.logo_pixmap = QPixmap(
+            "D:\\Gui-Projet\\CyberEscape2.png")  # Remplacez par le chemin réel de votre logo
         # Redimensionne l'image
         self.logo_pixmap = self.logo_pixmap.scaled(200, 200, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.logo_label.setPixmap(self.logo_pixmap)
@@ -56,35 +62,10 @@ class CyberEscape(QWidget):
         # Player vidéo
         self.player = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         # Label vidéo
-        # Bouton vert pour lancer la vidéo d'explication
-        bouton_video = QPushButton("▶")
-        bouton_video.setFixedSize(35, 35)
-        bouton_video.setStyleSheet("""
-            background-color: #4CAF50;  /* Vert */
-            color: white;
-            font-weight: bold;
-            font-size: 16px;
-            border-radius: 17px;
-        """)
-        bouton_video.pressed.connect(lambda: bouton_video.setStyleSheet("""
-            background-color: #388E3C;  /* Vert foncé pressé */
-            color: white;
-            font-weight: bold;
-            font-size: 16px;
-            border-radius: 17px;
-        """))
-        bouton_video.released.connect(lambda: bouton_video.setStyleSheet("""
-            background-color: #4CAF50;
-            color: white;
-            font-weight: bold;
-            font-size: 16px;
-                                                                         
-            border-radius: 17px;
-        """))
-        bouton_video.clicked.connect(lambda: self.lancer_video("C:/Users/Goku9/.vscode/Gui-Projet/ILOVE.mp4"))  # remplace par ton chemin
-        bouton_video.setToolTip("Vidéo d'explication")
+        self.label_video = QLabel("Vidéo\nd'explications", self)
+        self.label_video.setAlignment(Qt.AlignCenter)
         video_layout = QHBoxLayout()
-        video_layout.addWidget(bouton_video)
+        video_layout.addWidget(self.label_video)
         # Liste des niveaux
         niveaux = ["Niveau 1", "Niveau 2", "Niveau 3", "Niveau 4", "Niveau 5"]
         self.layout_niveaux = QVBoxLayout()
@@ -101,43 +82,56 @@ class CyberEscape(QWidget):
             if i == 0:
                 bouton_niveau.setStyleSheet("background-color: #FFCC33; border-radius: 5px; font-size: 14px;")
                 bouton_niveau.clicked.connect(self.ouvrir_formulaire)  # Clique sur Niveau 1
+
+            elif i == 1:
+                bouton_niveau.setStyleSheet("background-color: #FFCC33; border-radius: 5px; font-size: 14px;")
+                bouton_niveau.clicked.connect(self.ouvrir_fenetre_osint)
+            elif i == 2:
+                bouton_niveau.setStyleSheet("background-color: #FFCC33; border-radius: 5px; font-size: 14px;")
+                bouton_niveau.clicked.connect(self.ouvrir_fenetre_spoofing)
+            elif i == 3:  # Niveau 4
+                bouton_niveau.setStyleSheet("background-color: #FFCC33; border-radius: 5px; font-size: 14px;")
+                bouton_niveau.clicked.connect(self.ouvrir_fenetre_niveau4)
             else:
                 bouton_niveau.setStyleSheet("background-color: #FFCC33; border-radius: 5px; font-size: 14px;")
-            
+                bouton_niveau.clicked.connect(lambda _, n=niveau: self.ouvrir_info_niveau(n))
+
             label_temps = QLabel(f"Temps :")
             self.labels_temps[niveau] = label_temps
             self.boutons_niveaux[niveau] = bouton_niveau
 
-
             radio_bouton = QRadioButton()
-            radio_bouton.toggled.connect(lambda checked, n=niveau, r=radio_bouton: self.verifier_mot_de_passe(n, r) if checked else None)
-            
-
+            radio_bouton.toggled.connect(
+                lambda checked, n=niveau, r=radio_bouton: self.verifier_mot_de_passe(n, r) if checked else None)
 
             bouton_plus = QPushButton("+")
             bouton_plus.setFixedSize(35, 35)
-            bouton_plus.setStyleSheet("background-color: #008CBA; border-radius: 17px; color: white; font-weight: bold; font-size: 16px;")
-            bouton_plus.pressed.connect(lambda btn=bouton_plus: btn.setStyleSheet("background-color: #005f7f; border-radius: 17px; color: white; font-weight: bold; font-size: 16px;"))
-            bouton_plus.released.connect(lambda btn=bouton_plus: btn.setStyleSheet("background-color: #008CBA; border-radius: 17px; color: white; font-weight: bold; font-size: 16px;"))
+            bouton_plus.setStyleSheet(
+                "background-color: #008CBA; border-radius: 17px; color: white; font-weight: bold; font-size: 16px;")
+            bouton_plus.pressed.connect(lambda btn=bouton_plus: btn.setStyleSheet(
+                "background-color: #005f7f; border-radius: 17px; color: white; font-weight: bold; font-size: 16px;"))
+            bouton_plus.released.connect(lambda btn=bouton_plus: btn.setStyleSheet(
+                "background-color: #008CBA; border-radius: 17px; color: white; font-weight: bold; font-size: 16px;"))
 
             bouton_play = QPushButton("▶")
             bouton_play.setFixedSize(35, 35)
-            bouton_play.setStyleSheet("background-color: #FF5733; border-radius: 17px; color: white; font-weight: bold; font-size: 16px;")
-            bouton_play.pressed.connect(lambda btn=bouton_play: btn.setStyleSheet("background-color: #b23c21; border-radius: 17px; color: white; font-weight: bold; font-size: 16px;"))
-            bouton_play.released.connect(lambda btn=bouton_play: btn.setStyleSheet("background-color: #FF5733; border-radius: 17px; color: white; font-weight: bold; font-size: 16px;"))
-            
-            if i == 0:
-                bouton_play.clicked.connect(lambda: self.lancer_video("C:/Users/Goku9/.vscode/Gui-Projet/ILOVE.mp4"))
-            
-            bouton_plus.clicked.connect(lambda checked=False, n=niveau: self.ouvrir_info_niveau(n))
+            bouton_play.setStyleSheet(
+                "background-color: #FF5733; border-radius: 17px; color: white; font-weight: bold; font-size: 16px;")
+            bouton_play.pressed.connect(lambda btn=bouton_play: btn.setStyleSheet(
+                "background-color: #b23c21; border-radius: 17px; color: white; font-weight: bold; font-size: 16px;"))
+            bouton_play.released.connect(lambda btn=bouton_play: btn.setStyleSheet(
+                "background-color: #FF5733; border-radius: 17px; color: white; font-weight: bold; font-size: 16px;"))
 
+            if i == 0:
+                bouton_play.clicked.connect(lambda: self.lancer_video("D:/Gui-Projet/ILOVE.mp4"))
+
+            bouton_plus.clicked.connect(lambda checked=False, n=niveau: self.ouvrir_info_niveau(n))
 
             niveau_layout.addWidget(bouton_niveau)
             niveau_layout.addWidget(label_temps)
             niveau_layout.addWidget(radio_bouton)
             niveau_layout.addWidget(bouton_plus)
             niveau_layout.addWidget(bouton_play)
-            
 
             self.layout_niveaux.addLayout(niveau_layout)
 
@@ -151,6 +145,7 @@ class CyberEscape(QWidget):
     def lancer_video(self, chemin_video):
         self.fenetre_video = FenetreVideo(chemin_video)
         self.fenetre_video.show()
+
     def ouvrir_info_niveau(self, niveau):
         texte_intro, texte_plus = self.textes_niveaux.get(niveau, ("Texte indisponible", ""))
         self.fenetre_info = FenetreInfo(texte_intro, texte_plus)
@@ -175,16 +170,15 @@ class CyberEscape(QWidget):
         self.fenetre_mdp = FenetreMotDePasse()
         self.fenetre_mdp.show()
 
-
-    
     def verifier_mot_de_passe(self, niveau, bouton_radio):
         mot_de_passe_correct = self.mots_de_passe_niveaux.get(niveau)
-        mot_saisi, ok = QInputDialog.getText(self, f"Mot de passe - {niveau}", "Entrez le mot de passe :", echo=QLineEdit.Password)
-    
+        mot_saisi, ok = QInputDialog.getText(self, f"Mot de passe - {niveau}", "Entrez le mot de passe :",
+                                             echo=QLineEdit.Password)
+
         if ok:
             if mot_saisi == mot_de_passe_correct:
                 bouton_radio.setChecked(True)
-                 # Calcule le temps passé dans le niveau
+                # Calcule le temps passé dans le niveau
                 temps_debut = self.temps_debut_niveaux.get(niveau, QTime.currentTime())
                 temps_actuel = QTime.currentTime()
                 secondes_passees = temps_debut.secsTo(temps_actuel)
@@ -193,7 +187,6 @@ class CyberEscape(QWidget):
                 minutes = (secondes_passees % 3600) // 60
                 secondes = secondes_passees % 60
                 texte_temps = f"✔ Fini en {heures:02d}:{minutes:02d}:{secondes:02d}"
-
 
                 # Met à jour la couleur du bouton de niveau en vert
                 bouton_niveau = self.boutons_niveaux.get(niveau)
@@ -206,7 +199,6 @@ class CyberEscape(QWidget):
                         font-weight: bold;
                     """)
 
-
                 self.mettre_a_jour_label_temps(niveau, texte_temps)
                 bouton_radio.setStyleSheet("""
                     background-color: #4CAF50;  /* Vert lorsque correct */
@@ -214,7 +206,7 @@ class CyberEscape(QWidget):
                     border: 2px solid #388E3C;  /* Bordure verte foncée */
                     font-weight: bold;  /* Texte en gras */
                 """)
-    
+
                 # Griser le bouton après validation (mais lui laisser un aspect joli)
                 bouton_radio.setStyleSheet("""
                     background-color: #B2FF59;  /* Vert pâle pour l'état terminé */
@@ -223,7 +215,7 @@ class CyberEscape(QWidget):
                     font-weight: bold;
                 """)
                 bouton_radio.setEnabled(False)  # Empêche de cliquer à nouveau
-                
+
             else:
                 QMessageBox.warning(self, "Erreur", "Mot de passe incorrect.")
                 bouton_radio.setChecked(False)
@@ -232,25 +224,45 @@ class CyberEscape(QWidget):
         self.formulaire = FormulaireInscription()
         self.formulaire.show()
 
+    def ouvrir_fenetre_niveau4(self):
+        self.fenetre_niv4 = FenetreNiveau4()
+        self.fenetre_niv4.show()
+
     def mettre_a_jour_label_temps(self, niveau, nouveau_texte):
         if niveau in self.labels_temps:
             self.labels_temps[niveau].setText(nouveau_texte)
 
- 
+    def ouvrir_fenetre_osint(self):
+        self.fenetre_osint = FenetreOsint(self.lancer_niveau_2_apres_osint)
+        self.fenetre_osint.show()
 
- 
- 
- 
- 
- 
- 
- 
- 
- 
+    def ouvrir_fenetre_spoofing(self):
+        self.fenetre_spoof = FenetreSpoofing()
+        self.fenetre_spoof.show()
 
-    
+    def lancer_niveau_2_apres_osint(self, identifiant):
+        QMessageBox.information(self, "Dictionnaire généré", f"Un pseudo a été enregistré : {identifiant}")
 
-     
+        # Génération d’un dictionnaire simple pour simulation
+        variantes = [
+            identifiant,
+            identifiant + "123",
+            identifiant + "2024",
+            identifiant.upper(),
+            identifiant[::-1],
+            "@" + identifiant,
+            identifiant + "!"
+        ]
+
+        # Sauvegarde dans un fichier texte
+        with open("dictionnaire_instagram.txt", "w") as f:
+            for mot in variantes:
+                f.write(mot + "\n")
+
+        # Ensuite, on lance les infos du niveau 2
+        self.ouvrir_info_niveau("Niveau 2")
+
+
 # Lancer l'application
 app = QApplication([])
 fenetre = CyberEscape()

