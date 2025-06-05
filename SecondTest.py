@@ -8,7 +8,7 @@ from fenetreMDP import FenetreMotDePasse
 from PyQt5.QtWidgets import QInputDialog, QMessageBox,QLineEdit
 from PyQt5.QtWidgets import QInputDialog, QMessageBox
 from PyQt5.QtGui import QPalette
-
+from fenetreRAMS import FenetreNiveau4
 from formulaire import FormulaireInscription
 
 from AstuceWindow import FenetreInfo
@@ -26,12 +26,11 @@ class CyberEscape(QWidget):
 
 
         self.textes_niveaux = {
-        "Niveau 1": ("Bienvenue dans le premier niveau !", "Vous apprendrez à détecter des mails frauduleux."),
-        "Niveau 2": ("Ce niveau teste votre mémoire.", "Vous devrez retenir un mot de passe complexe."),
-        "Niveau 3": ("Un défi réseau vous attend.", "Configurez un pare-feu pour bloquer les attaques."),
-        "Niveau 4": ("Bienvenue dans la cryptographie.", "Décryptez un message codé en César."),
-        "Niveau 5": ("Le défi final approche !", "Protégez un système complet contre une attaque.")
-        }
+            "Niveau 1": ("Bienvenue dans le premier niveau !", "Vous apprendrez à détecter des mails frauduleux."),
+            "Niveau 2": ("Ce niveau teste votre mémoire.", "Vous devrez retenir un mot de passe complexe."),
+            "Niveau 3": ("Un défi réseau vous attend.", "Configurez un pare-feu pour bloquer les attaques."),
+            "Niveau 4": ("🧩 Mission : Bienvenue dans la Cryptographie !" , "🔐 Un employé d'une grande banque a téléchargé par erreur un fichier exécutable à partir d’un site de streaming. Ce fichier contenait un ransomware qui a chiffré tous les documents confidentiels de l’entreprise. \n💻 Votre mission est cruciale : retracer les étapes de l'attaque pour comprendre comment les données ont été chiffrées, et tenter de retrouver la clé de déchiffrement."),
+            "Niveau 5": ("Le défi final approche !", "Protégez un système complet contre une attaque.")}
 
         self.mots_de_passe_niveaux = {
         "Niveau 1": "cyber01",
@@ -101,6 +100,16 @@ class CyberEscape(QWidget):
             if i == 0:
                 bouton_niveau.setStyleSheet("background-color: #FFCC33; border-radius: 5px; font-size: 14px;")
                 bouton_niveau.clicked.connect(self.ouvrir_formulaire)  # Clique sur Niveau 1
+            elif i == 1:
+                bouton_niveau.setStyleSheet("background-color: #FFCC33; border-radius: 5px; font-size: 14px;")
+                bouton_niveau.clicked.connect(self.ouvrir_fenetre_osint)
+            elif i == 2:
+                bouton_niveau.setStyleSheet("background-color: #FFCC33; border-radius: 5px; font-size: 14px;")
+                bouton_niveau.clicked.connect(self.ouvrir_fenetre_spoofing)
+            elif i == 3:  # Niveau 4
+                bouton_niveau.setStyleSheet("background-color: #FFCC33; border-radius: 5px; font-size: 14px;")
+                bouton_niveau.clicked.connect(self.ouvrir_fenetre_niveau4)
+            
             else:
                 bouton_niveau.setStyleSheet("background-color: #FFCC33; border-radius: 5px; font-size: 14px;")
             
@@ -231,12 +240,42 @@ class CyberEscape(QWidget):
     def ouvrir_formulaire(self):
         self.formulaire = FormulaireInscription()
         self.formulaire.show()
-
+    def ouvrir_fenetre_niveau4(self):
+        self.fenetre_niv4 = FenetreNiveau4()
+        self.fenetre_niv4.show()
     def mettre_a_jour_label_temps(self, niveau, nouveau_texte):
         if niveau in self.labels_temps:
             self.labels_temps[niveau].setText(nouveau_texte)
 
- 
+    def ouvrir_fenetre_osint(self):
+        self.fenetre_osint = FenetreOsint(self.lancer_niveau_2_apres_osint)
+        self.fenetre_osint.show()
+
+    def ouvrir_fenetre_spoofing(self):
+        self.fenetre_spoof = FenetreSpoofing()
+        self.fenetre_spoof.show()
+
+    def lancer_niveau_2_apres_osint(self, identifiant):
+        QMessageBox.information(self, "Dictionnaire généré", f"Un pseudo a été enregistré : {identifiant}")
+
+        # Génération d’un dictionnaire simple pour simulation
+        variantes = [
+            identifiant,
+            identifiant + "123",
+            identifiant + "2024",
+            identifiant.upper(),
+            identifiant[::-1],
+            "@" + identifiant,
+            identifiant + "!"
+        ]
+
+        # Sauvegarde dans un fichier texte
+        with open("dictionnaire_instagram.txt", "w") as f:
+            for mot in variantes:
+                f.write(mot + "\n")
+
+        # Ensuite, on lance les infos du niveau 2
+        self.ouvrir_info_niveau("Niveau 2")
 
  
  
