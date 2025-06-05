@@ -118,7 +118,7 @@ def send_phishing_email(recipient_email, user_name, organization, logo_url):
             <p>Nous avons détecté une nouvelle connexion à votre compte {organization}. 
             Si c'était vous, aucune action de votre part n'est requise. Dans le cas contraire, 
             nous vous aiderons à sécuriser votre compte.</p>
-            <a href="http://localhost:5000/reset?user={user_name}" class="btn">Changer votre mot de passe</a>
+            <a href="http://127.0.0.1:5000/fake-warning?user={user_name}" class="btn">Changer votre mot de passe</a>
             <div class="footer">
                 Vous pouvez aussi voir l'activité liée à la sécurité de votre compte ici <br>
                 
