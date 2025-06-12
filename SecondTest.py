@@ -8,7 +8,9 @@ from fenetreMDP import FenetreMotDePasse
 from PyQt5.QtWidgets import QInputDialog, QMessageBox,QLineEdit
 from PyQt5.QtWidgets import QInputDialog, QMessageBox
 from PyQt5.QtGui import QPalette
+from fenetreOSINT import FenetreOsint
 from fenetreRAMS import FenetreNiveau4
+from fenetreSpoofing import FenetreSpoofing
 from formulaire import FormulaireInscription
 
 from AstuceWindow import FenetreInfo
@@ -84,6 +86,7 @@ class CyberEscape(QWidget):
         bouton_video.setToolTip("Vidéo d'explication")
         video_layout = QHBoxLayout()
         video_layout.addWidget(bouton_video)
+        
         # Liste des niveaux
         niveaux = ["Niveau 1", "Niveau 2", "Niveau 3", "Niveau 4", "Niveau 5"]
         self.layout_niveaux = QVBoxLayout()
