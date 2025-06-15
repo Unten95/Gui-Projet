@@ -17,7 +17,9 @@ class FenetreSpoofing(QWidget):
 <h3>📝 Tâches à accomplir :</h3>
 <ol>
 <li>Connectez-vous au portail RH avec vos identifiants.</li>
-<li>Vérifiez que les informations des employés n’ont pas été modifiées.</li>
+<li>Veuillez trouver les informations nécessaires sur Politique RH 2025 (confidentiel) en exécutant les commandes suivantes :
+cd ~/Downloads
+./flag.run</li>
 <li>Utilisez le script réseau pour observer les connexions effectuées.</li>
 <li>Relevez toute anomalie suspecte (adresse IP étrange, comportement du site, erreurs...).</li>
 <li>Rédigez un rapport dans le fichier prévu à cet effet.</li>
@@ -26,7 +28,7 @@ class FenetreSpoofing(QWidget):
 <h3>📁 Outils disponibles :</h3>
 <ul>
 <li><b>Script :</b> <code>analyse_dns.py</code> (permet d'observer les résolutions DNS)</li>
-<li><b>Répertoire de logs :</b> <code>~/logs_http/</code> (se remplit automatiquement)</li>
+<li><b>Répertoire de logs :</b> <code>~/logs_https/</code> (se remplit automatiquement)</li>
 <li><b>Rapport à remplir :</b> <code>~/Documents/Rapport_Incident.txt</code></li>
 </ul>
 
