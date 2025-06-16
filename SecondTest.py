@@ -28,13 +28,22 @@ class CyberEscape(QWidget):
 
 
         self.textes_niveaux = {
-            "Niveau 1": ("Bienvenue dans le premier niveau !", "Vous apprendrez à détecter des mails frauduleux."),
-            "Niveau 2": ("Ce niveau teste votre mémoire.", "Vous devrez retenir un mot de passe complexe."),
-            "Niveau 3": ("Un défi réseau vous attend.", "Configurez un pare-feu pour bloquer les attaques."),
+            "Niveau 1": ("🔍 Objectif :Apprenez à identifier un mail frauduleux, même lorsqu’il semble provenir d’une source de confiance.","\n💡Astuce :Inspectez l'expéditeur, le contenu du lien, et posez-vous les bonnes questions : Est-ce que ce mail est attendu ? Y a-t-il des fautes ? Le lien mène-t-il à un site officiel ?"),
+            "Niveau 2": ("🧠 Mission OSINT – Profil public en danger","\nBienvenue dans la seconde mission, agent.\n🎯Objectif : vous montrer à quel point les informations que vous partagez peuvent être utilisées dans des attaques ciblées.\n🔒 Serez-vous capable de deviner si votre propre mot de passe y figure ? Si oui : il est temps de le changer. Si non : bravo, vous avez résisté à une attaque OSINT ciblée. \nMais souvenez-vous :Ce que vous partagez en ligne peut être utilisé contre vous…"),
+            "Niveau 3": ("🕵️Bienvenue chez INTRA TECH – Département RH.","Vous êtes chargé d’une vérification interne sur le portail RH.\nConnectez-vous, récupérez les documents, lancez les scripts. Mais soyez attentif : un document téléchargé depuis le mauvais site pourrait ouvrir une brèche.À vous d’observer : comportements anormaux, connexions suspectes, lenteurs inhabituelles.Aucun signal d’alerte. Tout repose sur votre vigilance.Bonne chance, agent." ),
             "Niveau 4": ("🧩 Mission : Bienvenue dans la Cryptographie !" , "🔐 Un employé d'une grande banque a téléchargé par erreur un fichier exécutable à partir d’un site de streaming. Ce fichier contenait un ransomware qui a chiffré tous les documents confidentiels de l’entreprise. \n💻 Votre mission est cruciale : retracer les étapes de l'attaque pour comprendre comment les données ont été chiffrées, et tenter de retrouver la clé de déchiffrement."),
-            "Niveau 5": ("Le défi final approche !", "Protégez un système complet contre une attaque.")}
+            "Niveau 5": ("🎁 Défi Bonus – La Clé Mystère !","\nFélicitations ! Pour avoir atteint ce niveau, vous recevez une clé USB cadeau 🎉\nMais attention… dans le monde de la cybersécurité, tout cadeau cache peut-être un piège.\nSerez-vous capable de réagir à temps ? Ou serez-vous victime de votre propre curiosité ? 😅"),
+}
 
         self.mots_de_passe_niveaux = {
+        "Niveau 1": "cyberIzan@gmail.com",
+        "Niveau 2": "cyber02",
+        "Niveau 3": "FLAG{dns_spoofing_success_resolved_to_attacker_ip}",
+        "Niveau 4": "ThisIsMySecretAESKey1234567890!!",
+        "Niveau 5": "CYber1234"
+        }
+
+        self.mots_de_passe_niveaux_incorrect = {
         "Niveau 1": "cyber01",
         "Niveau 2": "cyber02",
         "Niveau 3": "cyber03",
@@ -163,6 +172,7 @@ class CyberEscape(QWidget):
     def lancer_video(self, chemin_video):
         self.fenetre_video = FenetreVideo(chemin_video)
         self.fenetre_video.show()
+
     def ouvrir_info_niveau(self, niveau):
         texte_intro, texte_plus = self.textes_niveaux.get(niveau, ("Texte indisponible", ""))
         self.fenetre_info = FenetreInfo(texte_intro, texte_plus)
@@ -172,32 +182,42 @@ class CyberEscape(QWidget):
             self.temps_debut_niveaux[niveau] = QTime.currentTime()
 
     def mettre_a_jour_chronometre(self):
-        if self.secondes_restantes > 0:
-            self.secondes_restantes -= 1
-            heures = self.secondes_restantes // 3600
-            minutes = (self.secondes_restantes % 3600) // 60
-            secondes = self.secondes_restantes % 60
-            self.label_chrono.setText(f"{heures:02d}:{minutes:02d}:{secondes:02d}")
-        else:
-            self.timer.stop()
-            self.label_chrono.setText("Temps écoulé !")
-            self.label_chrono.setStyleSheet("font-size: 18px; color: gray; font-weight: bold;")
+            if self.secondes_restantes > 0:
+                self.secondes_restantes -= 1
+                heures = self.secondes_restantes // 3600
+                minutes = (self.secondes_restantes % 3600) // 60
+                secondes = self.secondes_restantes % 60
+                self.label_chrono.setText(f"{heures:02d}:{minutes:02d}:{secondes:02d}")
+            else:
+                self.timer.stop()
+                self.label_chrono.setText("Temps écoulé !")
+                self.label_chrono.setStyleSheet("font-size: 18px; color: gray; font-weight: bold;")
 
     def ouvrir_mot_de_passe(self):
-        self.fenetre_mdp = FenetreMotDePasse()
-        self.fenetre_mdp.show()
+            self.fenetre_mdp = FenetreMotDePasse()
+            self.fenetre_mdp.show()
 
 
-    
     def verifier_mot_de_passe(self, niveau, bouton_radio):
         mot_de_passe_correct = self.mots_de_passe_niveaux.get(niveau)
-        mot_saisi, ok = QInputDialog.getText(self, f"Mot de passe - {niveau}", "Entrez le mot de passe :", echo=QLineEdit.Password)
-    
-        if ok:
-            if mot_saisi == mot_de_passe_correct:
-                bouton_radio.setChecked(True)
-                 # Calcule le temps passé dans le niveau
-                temps_debut = self.temps_debut_niveaux.get(niveau, QTime.currentTime())
+        mot_de_passe_interdit = self.mots_de_passe_niveaux_incorrect.get(niveau)  # Dictionnaire des mauvais mots de passe
+
+        mot_saisi, ok = QInputDialog.getText(
+            self,
+            f"Mot de passe - {niveau}",
+            "Entrez le mot de passe :",
+            echo=QLineEdit.Password
+        )
+
+        if not ok or not mot_saisi:
+            return  # L'utilisateur a annulé ou n'a rien saisi
+
+        if mot_saisi == mot_de_passe_correct:
+            bouton_radio.setChecked(True)
+
+            # Calcule le temps passé dans le niveau
+            temps_debut = self.temps_debut_niveaux.get(niveau)
+            if temps_debut:
                 temps_actuel = QTime.currentTime()
                 secondes_passees = temps_debut.secsTo(temps_actuel)
 
@@ -205,47 +225,64 @@ class CyberEscape(QWidget):
                 minutes = (secondes_passees % 3600) // 60
                 secondes = secondes_passees % 60
                 texte_temps = f"✔ Fini en {heures:02d}:{minutes:02d}:{secondes:02d}"
-
-
-                # Met à jour la couleur du bouton de niveau en vert
-                bouton_niveau = self.boutons_niveaux.get(niveau)
-                if bouton_niveau:
-                    bouton_niveau.setStyleSheet("""
-                        background-color: #4CAF50;
-                        color: white;
-                        border-radius: 5px;
-                        font-size: 14px;
-                        font-weight: bold;
-                    """)
-
-
                 self.mettre_a_jour_label_temps(niveau, texte_temps)
-                bouton_radio.setStyleSheet("""
-                    background-color: #4CAF50;  /* Vert lorsque correct */
-                    color: white;  /* Texte en blanc */
-                    border: 2px solid #388E3C;  /* Bordure verte foncée */
-                    font-weight: bold;  /* Texte en gras */
-                """)
-    
-                # Griser le bouton après validation (mais lui laisser un aspect joli)
-                bouton_radio.setStyleSheet("""
-                    background-color: #B2FF59;  /* Vert pâle pour l'état terminé */
-                    color: gray;  /* Texte gris */
-                    border: 2px solid #66BB6A;  /* Bordure verte plus claire */
+
+            # Met à jour la couleur du bouton de niveau en vert
+            bouton_niveau = self.boutons_niveaux.get(niveau)
+            if bouton_niveau:
+                bouton_niveau.setStyleSheet("""
+                    background-color: #4CAF50;
+                    color: white;
+                    border-radius: 5px;
+                    font-size: 14px;
                     font-weight: bold;
                 """)
-                bouton_radio.setEnabled(False)  # Empêche de cliquer à nouveau
-                
-            else:
-                QMessageBox.warning(self, "Erreur", "Mot de passe incorrect.")
-                bouton_radio.setChecked(False)
+
+            bouton_radio.setStyleSheet("""
+                background-color: #B2FF59;  /* Vert pâle */
+                color: gray;
+                border: 2px solid #66BB6A;
+                font-weight: bold;
+            """)
+            bouton_radio.setEnabled(False)
+
+        elif mot_saisi == mot_de_passe_interdit:
+            # Mot de passe connu mais incorrect → style rouge
+            bouton_radio.setChecked(True)  # Le bouton peut rester activé mais stylisé en rouge
+            self.mettre_a_jour_label_temps(niveau, "✖ Mauvais Flag utilisé")
+
+            bouton_radio.setStyleSheet("""
+                background-color: #FF8A80;  /* Rouge clair */
+                color: black;
+                border: 2px solid #D32F2F;
+                font-weight: bold;
+            """)
+            bouton_radio.setEnabled(False)
+
+            bouton_niveau = self.boutons_niveaux.get(niveau)
+            if bouton_niveau:
+                bouton_niveau.setStyleSheet("""
+                    background-color: #D32F2F;
+                    color: white;
+                    border-radius: 5px;
+                    font-size: 14px;
+                    font-weight: bold;
+                """)
+
+        else:
+            QMessageBox.warning(self, "Erreur", "Mot de passe incorrect.")
+            bouton_radio.setChecked(False)
+
+    
 
     def ouvrir_formulaire(self):
         self.formulaire = FormulaireInscription()
         self.formulaire.show()
+
     def ouvrir_fenetre_niveau4(self):
         self.fenetre_niv4 = FenetreNiveau4()
         self.fenetre_niv4.show()
+
     def mettre_a_jour_label_temps(self, niveau, nouveau_texte):
         if niveau in self.labels_temps:
             self.labels_temps[niveau].setText(nouveau_texte)
@@ -276,22 +313,7 @@ class CyberEscape(QWidget):
         with open("dictionnaire_instagram.txt", "w") as f:
             for mot in variantes:
                 f.write(mot + "\n")
-
-        # Ensuite, on lance les infos du niveau 2
-        self.ouvrir_info_niveau("Niveau 2")
-
  
- 
- 
- 
- 
- 
- 
- 
- 
-
-    
-
      
 # Lancer l'application
 app = QApplication([])

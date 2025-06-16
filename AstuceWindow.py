@@ -4,7 +4,7 @@ class FenetreInfo(QWidget):
     def __init__(self, texte_intro, texte_plus):
         super().__init__()
         self.setWindowTitle("Informations supplémentaires")
-        self.resize(400, 200)
+        self.resize(600, 300)
 
         layout = QVBoxLayout()
 
