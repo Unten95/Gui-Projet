@@ -2,18 +2,13 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHB
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtCore import Qt, QUrl
-from PyQt5.QtCore import QTimer, QTime
+from PyQt5.QtCore import Qt, QUrl, QTimer, QTime
 from fenetreMDP import FenetreMotDePasse
-from PyQt5.QtWidgets import QInputDialog, QMessageBox, QLineEdit
-from PyQt5.QtWidgets import QInputDialog, QMessageBox
+from PyQt5.QtWidgets import QInputDialog, QMessageBox, QLineEdit, QCheckBox
 from PyQt5.QtGui import QPalette
 from fenetreOSINT import FenetreOsint
 from fenetreRAMS import FenetreNiveau4
 from fenetreSpoofing import FenetreSpoofing
-
-
-
 from formulaire import FormulaireInscription
 
 from AstuceWindow import FenetreInfo
@@ -31,19 +26,70 @@ class CyberEscape(QWidget):
         self.boutons_niveaux = {}
 
         self.textes_niveaux = {
-            "Niveau 1": ("Bienvenue dans le premier niveau !", "Vous apprendrez à détecter des mails frauduleux."),
-            "Niveau 2": ("Ce niveau teste votre mémoire.", "Vous devrez retenir un mot de passe complexe."),
-            "Niveau 3": ("Un défi réseau vous attend.", "Configurez un pare-feu pour bloquer les attaques."),
-            "Niveau 4": ("🧩 Mission : Bienvenue dans la Cryptographie !" , "🔐 Un employé d'une grande banque a téléchargé par erreur un fichier exécutable à partir d’un site de streaming. Ce fichier contenait un ransomware qui a chiffré tous les documents confidentiels de l’entreprise. \n💻 Votre mission est cruciale : retracer les étapes de l'attaque pour comprendre comment les données ont été chiffrées, et tenter de retrouver la clé de déchiffrement."),
-            "Niveau 5": ("Le défi final approche !", "Protégez un système complet contre une attaque.")
+            "Niveau 1": (
+            "🔍 Objectif :Apprenez à identifier un mail frauduleux, même lorsqu’il semble provenir d’une source de confiance.",
+            "\n💡Astuce :Inspectez l'expéditeur, le contenu du lien, et posez-vous les bonnes questions : Est-ce que ce mail est attendu ? Y a-t-il des fautes ? Le lien mène-t-il à un site officiel ?"),
+            "Niveau 2": ("🧠 Mission OSINT – Profil public en danger",
+                         "\nBienvenue dans la seconde mission, agent.\n🎯Objectif : vous montrer à quel point les informations que vous partagez peuvent être utilisées dans des attaques ciblées.\n🔒 Serez-vous capable de deviner si votre propre mot de passe y figure ? Si oui : il est temps de le changer. Si non : bravo, vous avez résisté à une attaque OSINT ciblée. \nMais souvenez-vous :Ce que vous partagez en ligne peut être utilisé contre vous…"),
+            "Niveau 3": ("🕵️Bienvenue chez INTRA TECH – Département RH.",
+                         "Vous êtes chargé d’une vérification interne sur le portail RH.\nConnectez-vous, récupérez les documents, lancez les scripts. Mais soyez attentif : un document téléchargé depuis le mauvais site pourrait ouvrir une brèche.À vous d’observer : comportements anormaux, connexions suspectes, lenteurs inhabituelles.Aucun signal d’alerte. Tout repose sur votre vigilance.Bonne chance, agent."),
+            "Niveau 4": ("🧩 Mission : Bienvenue dans la Cryptographie !",
+                         "🔐 Un employé d'une grande banque a téléchargé par erreur un fichier exécutable à partir d’un site de streaming. Ce fichier contenait un ransomware qui a chiffré tous les documents confidentiels de l’entreprise. \n💻 Votre mission est cruciale : retracer les étapes de l'attaque pour comprendre comment les données ont été chiffrées, et tenter de retrouver la clé de déchiffrement."),
+            "Niveau 5": ("🎁 Défi Bonus – La Clé Mystère !",
+                         "\nFélicitations ! Pour avoir atteint ce niveau, vous recevez une clé USB cadeau 🎉\nMais attention… dans le monde de la cybersécurité, tout cadeau cache peut-être un piège.\nSerez-vous capable de réagir à temps ? Ou serez-vous victime de votre propre curiosité ? 😅"),
         }
 
         self.mots_de_passe_niveaux = {
+            "Niveau 1": "cyberizan@gmail.com",
+            "Niveau 2": "cyber02",
+            "Niveau 3": "FLAG{dns_spoofing_success_resolved_to_attacker_ip}",
+            "Niveau 4": "ThisIsMySecretAESKey1234567890!!",
+            "Niveau 5": "CYber1234"
+        }
+
+        self.mots_de_passe_niveaux_incorrect = {
             "Niveau 1": "cyber01",
             "Niveau 2": "cyber02",
             "Niveau 3": "cyber03",
             "Niveau 4": "cyber04",
             "Niveau 5": "cyber05"
+        }
+
+        self.contremesures_niveaux = {
+            "Niveau 1": """~~ Phishing : <br> 
+            - Vérifiez que l’expéditeur du mail est bien celui attendu et que le message semble légitime. <br> 
+            - Ne cliquez jamais sur un lien ou une pièce jointe sans être sûr de sa provenance. <br> 
+            <a href="https://www.cybermalveillance.gouv.fr/tous-nos-contenus/fiches-reflexes/hameconnage-phishing">➜ En savoir plus sur le phishing</a>""",
+
+            "Niveau 2": """~~ OSINT : <br> 
+            - Mettez vos comptes (ex. Instagram) en privé. <br> 
+            - Évitez de publier des informations personnelles, sensibles ou compromettantes. <br> 
+            ~~ Brute Force : <br> 
+            - N’utilisez pas de données personnelles dans vos mots de passe. <br> 
+            - Créez des mots de passe robustes : majuscules, minuscules, chiffres et caractères spéciaux. <br> 
+            <a href="https://www.cybermalveillance.gouv.fr/tous-nos-contenus/actualites/conseils-mot-de-passe">➜ Conseils pour des mots de passe sécurisés</a>""",
+
+            "Niveau 3": """~~ DNS Spoofing : <br> 
+            - Évitez les connexions à des Wi-Fi publics non sécurisés. <br> 
+            - Vérifiez toujours l’apparence et l’URL des pages web que vous visitez. <br> 
+            ~~ Reverse Shell : <br> 
+            - Ne lancez jamais de scripts ou de fichiers d’origine inconnue ou douteuse. <br> 
+            <a href="https://www.cert.ssi.gouv.fr/">➜ Bonnes pratiques générales (ANSSI)</a>""",
+
+            "Niveau 4": """~~ Clickjacking : <br> 
+            - Faites attention à ce sur quoi vous cliquez, même sur des sites connus. <br> 
+            - Méfiez-vous des téléchargements qui se lancent automatiquement après un clic. <br> 
+            ~~ Ransomware : <br> 
+            - Ne lancez pas d’exécutables non vérifiés, surtout avec des droits administrateur. <br> 
+            - Surveillez le comportement suspect d’un programme au moment de son lancement. <br> 
+            <a href="https://www.cybermalveillance.gouv.fr/tous-nos-contenus/fiches-reflexes/ransomware-rancongiciel">➜ Se protéger contre les ransomware</a>""",
+
+            "Niveau 5": """~~ HackyPi : <br> 
+            - Ne branchez jamais une clé USB ou un appareil inconnu à votre ordinateur. <br> 
+            - Désactivez les ports USB ou limitez leur usage si possible. <br> 
+            <a href="https://www.cybermalveillance.gouv.fr/">➜ Plus de conseils sur la sécurité informatique</a>"""
+
+
         }
 
         # Créer un QLabel pour afficher l'image du logo
@@ -62,10 +108,37 @@ class CyberEscape(QWidget):
         # Player vidéo
         self.player = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         # Label vidéo
-        self.label_video = QLabel("Vidéo\nd'explications", self)
-        self.label_video.setAlignment(Qt.AlignCenter)
+        # Bouton vert pour lancer la vidéo d'explication
+        bouton_video = QPushButton("▶")
+        bouton_video.setFixedSize(35, 35)
+        bouton_video.setStyleSheet("""
+            background-color: #4CAF50;  /* Vert */
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            border-radius: 17px;
+        """)
+        bouton_video.pressed.connect(lambda: bouton_video.setStyleSheet("""
+            background-color: #388E3C;  /* Vert foncé pressé */
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            border-radius: 17px;
+        """))
+        bouton_video.released.connect(lambda: bouton_video.setStyleSheet("""
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+
+            border-radius: 17px;
+        """))
+        bouton_video.clicked.connect(
+            lambda: self.lancer_video("D:\\Gui-Projet\\ILOVE.mp4"))  # remplace par ton chemin
+        bouton_video.setToolTip("Vidéo d'explication")
         video_layout = QHBoxLayout()
-        video_layout.addWidget(self.label_video)
+        video_layout.addWidget(bouton_video)
+
         # Liste des niveaux
         niveaux = ["Niveau 1", "Niveau 2", "Niveau 3", "Niveau 4", "Niveau 5"]
         self.layout_niveaux = QVBoxLayout()
@@ -82,7 +155,6 @@ class CyberEscape(QWidget):
             if i == 0:
                 bouton_niveau.setStyleSheet("background-color: #FFCC33; border-radius: 5px; font-size: 14px;")
                 bouton_niveau.clicked.connect(self.ouvrir_formulaire)  # Clique sur Niveau 1
-
             elif i == 1:
                 bouton_niveau.setStyleSheet("background-color: #FFCC33; border-radius: 5px; font-size: 14px;")
                 bouton_niveau.clicked.connect(self.ouvrir_fenetre_osint)
@@ -92,17 +164,21 @@ class CyberEscape(QWidget):
             elif i == 3:  # Niveau 4
                 bouton_niveau.setStyleSheet("background-color: #FFCC33; border-radius: 5px; font-size: 14px;")
                 bouton_niveau.clicked.connect(self.ouvrir_fenetre_niveau4)
+
             else:
                 bouton_niveau.setStyleSheet("background-color: #FFCC33; border-radius: 5px; font-size: 14px;")
-                bouton_niveau.clicked.connect(lambda _, n=niveau: self.ouvrir_info_niveau(n))
 
             label_temps = QLabel(f"Temps :")
             self.labels_temps[niveau] = label_temps
             self.boutons_niveaux[niveau] = bouton_niveau
+            # creation des checkbox
+            checkbox_valide = QCheckBox()
+            checkbox_valide.setText("")  # Laisse vide si tu ne veux pas de texte à côté
 
-            radio_bouton = QRadioButton()
-            radio_bouton.toggled.connect(
-                lambda checked, n=niveau, r=radio_bouton: self.verifier_mot_de_passe(n, r) if checked else None)
+            # Connecte la vérification au clic (état coché)
+            checkbox_valide.stateChanged.connect(
+                lambda state, n=niveau, cb=checkbox_valide: self.verifier_mot_de_passe(n,
+                                                                                       cb) if state == Qt.Checked else None)
 
             bouton_plus = QPushButton("+")
             bouton_plus.setFixedSize(35, 35)
@@ -123,13 +199,13 @@ class CyberEscape(QWidget):
                 "background-color: #FF5733; border-radius: 17px; color: white; font-weight: bold; font-size: 16px;"))
 
             if i == 0:
-                bouton_play.clicked.connect(lambda: self.lancer_video("D:/Gui-Projet/ILOVE.mp4"))
+                bouton_play.clicked.connect(lambda: self.lancer_video("D:\\Gui-Projet\\ILOVE.mp4"))
 
             bouton_plus.clicked.connect(lambda checked=False, n=niveau: self.ouvrir_info_niveau(n))
 
             niveau_layout.addWidget(bouton_niveau)
             niveau_layout.addWidget(label_temps)
-            niveau_layout.addWidget(radio_bouton)
+            niveau_layout.addWidget(checkbox_valide)
             niveau_layout.addWidget(bouton_plus)
             niveau_layout.addWidget(bouton_play)
 
@@ -141,6 +217,21 @@ class CyberEscape(QWidget):
         layout_principal.addLayout(self.layout_niveaux)
         layout_principal.addWidget(self.label_chrono)
         self.setLayout(layout_principal)
+
+        # Bouton pour afficher les statistiques finales
+        bouton_stats = QPushButton("Voir mes stats")
+        bouton_stats.setStyleSheet("""
+            background-color: #9C27B0;  /* Violet */
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            border-radius: 8px;
+            padding: 8px;
+        """)
+        bouton_stats.clicked.connect(self.afficher_stats)
+
+        layout_principal.addWidget(bouton_stats)
+
 
     def lancer_video(self, chemin_video):
         self.fenetre_video = FenetreVideo(chemin_video)
@@ -172,14 +263,25 @@ class CyberEscape(QWidget):
 
     def verifier_mot_de_passe(self, niveau, bouton_radio):
         mot_de_passe_correct = self.mots_de_passe_niveaux.get(niveau)
-        mot_saisi, ok = QInputDialog.getText(self, f"Mot de passe - {niveau}", "Entrez le mot de passe :",
-                                             echo=QLineEdit.Password)
+        mot_de_passe_interdit = self.mots_de_passe_niveaux_incorrect.get(
+            niveau)  # Dictionnaire des mauvais mots de passe
 
-        if ok:
-            if mot_saisi == mot_de_passe_correct:
-                bouton_radio.setChecked(True)
-                # Calcule le temps passé dans le niveau
-                temps_debut = self.temps_debut_niveaux.get(niveau, QTime.currentTime())
+        mot_saisi, ok = QInputDialog.getText(
+            self,
+            f"Mot de passe - {niveau}",
+            "Entrez le mot de passe :",
+            echo=QLineEdit.Password
+        )
+
+        if not ok or not mot_saisi:
+            return  # L'utilisateur a annulé ou n'a rien saisi
+
+        if mot_saisi == mot_de_passe_correct:
+            bouton_radio.setChecked(True)
+
+            # Calcule le temps passé dans le niveau
+            temps_debut = self.temps_debut_niveaux.get(niveau)
+            if temps_debut:
                 temps_actuel = QTime.currentTime()
                 secondes_passees = temps_debut.secsTo(temps_actuel)
 
@@ -187,38 +289,53 @@ class CyberEscape(QWidget):
                 minutes = (secondes_passees % 3600) // 60
                 secondes = secondes_passees % 60
                 texte_temps = f"✔ Fini en {heures:02d}:{minutes:02d}:{secondes:02d}"
-
-                # Met à jour la couleur du bouton de niveau en vert
-                bouton_niveau = self.boutons_niveaux.get(niveau)
-                if bouton_niveau:
-                    bouton_niveau.setStyleSheet("""
-                        background-color: #4CAF50;
-                        color: white;
-                        border-radius: 5px;
-                        font-size: 14px;
-                        font-weight: bold;
-                    """)
-
                 self.mettre_a_jour_label_temps(niveau, texte_temps)
-                bouton_radio.setStyleSheet("""
-                    background-color: #4CAF50;  /* Vert lorsque correct */
-                    color: white;  /* Texte en blanc */
-                    border: 2px solid #388E3C;  /* Bordure verte foncée */
-                    font-weight: bold;  /* Texte en gras */
-                """)
 
-                # Griser le bouton après validation (mais lui laisser un aspect joli)
-                bouton_radio.setStyleSheet("""
-                    background-color: #B2FF59;  /* Vert pâle pour l'état terminé */
-                    color: gray;  /* Texte gris */
-                    border: 2px solid #66BB6A;  /* Bordure verte plus claire */
+            # Met à jour la couleur du bouton de niveau en vert
+            bouton_niveau = self.boutons_niveaux.get(niveau)
+            if bouton_niveau:
+                bouton_niveau.setStyleSheet("""
+                    background-color: #4CAF50;
+                    color: white;
+                    border-radius: 5px;
+                    font-size: 14px;
                     font-weight: bold;
                 """)
-                bouton_radio.setEnabled(False)  # Empêche de cliquer à nouveau
 
-            else:
-                QMessageBox.warning(self, "Erreur", "Mot de passe incorrect.")
-                bouton_radio.setChecked(False)
+            bouton_radio.setStyleSheet("""
+                background-color: #B2FF59;  /* Vert pâle */
+                color: gray;
+                border: 2px solid #66BB6A;
+                font-weight: bold;
+            """)
+            bouton_radio.setEnabled(False)
+
+        elif mot_saisi == mot_de_passe_interdit:
+            # Mot de passe connu mais incorrect → style rouge
+            bouton_radio.setChecked(True)  # Le bouton peut rester activé mais stylisé en rouge
+            self.mettre_a_jour_label_temps(niveau, "✖ Mauvais Flag utilisé")
+
+            bouton_radio.setStyleSheet("""
+                background-color: #FF8A80;  /* Rouge clair */
+                color: black;
+                border: 2px solid #D32F2F;
+                font-weight: bold;
+            """)
+            bouton_radio.setEnabled(False)
+
+            bouton_niveau = self.boutons_niveaux.get(niveau)
+            if bouton_niveau:
+                bouton_niveau.setStyleSheet("""
+                    background-color: #D32F2F;
+                    color: white;
+                    border-radius: 5px;
+                    font-size: 14px;
+                    font-weight: bold;
+                """)
+
+        else:
+            QMessageBox.warning(self, "Erreur", "Mot de passe incorrect.")
+            bouton_radio.setChecked(False)
 
     def ouvrir_formulaire(self):
         self.formulaire = FormulaireInscription()
@@ -259,8 +376,36 @@ class CyberEscape(QWidget):
             for mot in variantes:
                 f.write(mot + "\n")
 
-        # Ensuite, on lance les infos du niveau 2
-        self.ouvrir_info_niveau("Niveau 2")
+    def afficher_stats(self):
+        niveaux_valides = 0
+        recap = ""
+
+        # Récapitulatif des résultats par niveau (texte simple, mais on pourrait aussi le faire en HTML)
+        for niveau in self.boutons_niveaux.keys():
+            label_texte = self.labels_temps[niveau].text()
+            if "✔" in label_texte:  # Niveau réussi
+                niveaux_valides += 1
+            recap += f"{niveau} : {label_texte}<br>"
+
+        score_final = f"<br>🏆 Score final : <b>{niveaux_valides} / {len(self.boutons_niveaux)}</b> niveaux validés.<br>"
+        contremesures = "<br><b>🛡️ Contremesures recommandées :</b><br>"
+
+        for niveau in self.boutons_niveaux.keys():
+            label_texte = self.labels_temps[niveau].text()
+
+            # Niveau avec mauvais flag
+            if "✖" in label_texte:
+                contremesures += f'<br><span style="color:red; font-weight:bold;">🔸 {niveau} :<br>{self.contremesures_niveaux.get(niveau, "Pas de contremesures définies.")}</span><br>'
+            # Niveau non réussi ni mauvais flag (échoué ou non tenté)
+            elif "✔" not in label_texte:
+                contremesures += f'<br>🔸 {niveau} :<br>{self.contremesures_niveaux.get(niveau, "Pas de contremesures définies.")}<br>'
+
+        # Afficher dans une QMessageBox avec support HTML
+        msg = QMessageBox(self)
+        msg.setWindowTitle("Statistiques finales")
+        msg.setTextFormat(Qt.TextFormat.RichText)  # Important pour activer le HTML
+        msg.setText(recap + score_final + contremesures)
+        msg.exec_()
 
 
 # Lancer l'application
