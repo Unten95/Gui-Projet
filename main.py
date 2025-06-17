@@ -5,7 +5,7 @@ from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtCore import QTimer, QTime
 from fenetreMDP import FenetreMotDePasse
-from PyQt5.QtWidgets import QInputDialog, QMessageBox,QLineEdit,QCheckBox
+from PyQt5.QtWidgets import QInputDialog, QMessageBox, QLineEdit, QCheckBox
 from PyQt5.QtGui import QPalette
 from fenetreOSINT import FenetreOsint
 from fenetreRAMS import FenetreNiveau4
@@ -14,6 +14,7 @@ from formulaire import FormulaireInscription
 
 from AstuceWindow import FenetreInfo
 from VideoWindow import FenetreVideo
+
 
 class CyberEscape(QWidget):
     def __init__(self):
@@ -25,35 +26,49 @@ class CyberEscape(QWidget):
         self.temps_debut_niveaux = {}
         self.boutons_niveaux = {}
 
-
         self.textes_niveaux = {
-            "Niveau 1": ("🔍 Objectif :Apprenez à identifier un mail frauduleux, même lorsqu’il semble provenir d’une source de confiance.","\n💡Astuce :Inspectez l'expéditeur, le contenu du lien, et posez-vous les bonnes questions : Est-ce que ce mail est attendu ? Y a-t-il des fautes ? Le lien mène-t-il à un site officiel ?"),
-            "Niveau 2": ("🧠 Mission OSINT – Profil public en danger","\nBienvenue dans la seconde mission, agent.\n🎯Objectif : vous montrer à quel point les informations que vous partagez peuvent être utilisées dans des attaques ciblées.\n🔒 Serez-vous capable de deviner si votre propre mot de passe y figure ? Si oui : il est temps de le changer. Si non : bravo, vous avez résisté à une attaque OSINT ciblée. \nMais souvenez-vous :Ce que vous partagez en ligne peut être utilisé contre vous…"),
-            "Niveau 3": ("🕵️Bienvenue chez INTRA TECH – Département RH.","Vous êtes chargé d’une vérification interne sur le portail RH.\nConnectez-vous, récupérez les documents, lancez les scripts. Mais soyez attentif : un document téléchargé depuis le mauvais site pourrait ouvrir une brèche.À vous d’observer : comportements anormaux, connexions suspectes, lenteurs inhabituelles.Aucun signal d’alerte. Tout repose sur votre vigilance.Bonne chance, agent." ),
-            "Niveau 4": ("🧩 Mission : Bienvenue dans la Cryptographie !" , "🔐 Un employé d'une grande banque a téléchargé par erreur un fichier exécutable à partir d’un site de streaming. Ce fichier contenait un ransomware qui a chiffré tous les documents confidentiels de l’entreprise. \n💻 Votre mission est cruciale : retracer les étapes de l'attaque pour comprendre comment les données ont été chiffrées, et tenter de retrouver la clé de déchiffrement."),
-            "Niveau 5": ("🎁 Défi Bonus – La Clé Mystère !","\nFélicitations ! Pour avoir atteint ce niveau, vous recevez une clé USB cadeau 🎉\nMais attention… dans le monde de la cybersécurité, tout cadeau cache peut-être un piège.\nSerez-vous capable de réagir à temps ? Ou serez-vous victime de votre propre curiosité ? 😅"),
-}
+            "Niveau 1": (
+            "🔍 Objectif :Apprenez à identifier un mail frauduleux, même lorsqu’il semble provenir d’une source de confiance.",
+            "\n💡Astuce :Inspectez l'expéditeur, le contenu du lien, et posez-vous les bonnes questions : Est-ce que ce mail est attendu ? Y a-t-il des fautes ? Le lien mène-t-il à un site officiel ?"),
+            "Niveau 2": ("🧠 Mission OSINT – Profil public en danger",
+                         "\nBienvenue dans la seconde mission, agent.\n🎯Objectif : vous montrer à quel point les informations que vous partagez peuvent être utilisées dans des attaques ciblées.\n🔒 Serez-vous capable de deviner si votre propre mot de passe y figure ? Si oui : il est temps de le changer. Si non : bravo, vous avez résisté à une attaque OSINT ciblée. \nMais souvenez-vous :Ce que vous partagez en ligne peut être utilisé contre vous…"),
+            "Niveau 3": ("🕵️Bienvenue chez INTRA TECH – Département RH.",
+                         "Vous êtes chargé d’une vérification interne sur le portail RH.\nConnectez-vous, récupérez les documents, lancez les scripts. Mais soyez attentif : un document téléchargé depuis le mauvais site pourrait ouvrir une brèche.À vous d’observer : comportements anormaux, connexions suspectes, lenteurs inhabituelles.Aucun signal d’alerte. Tout repose sur votre vigilance.Bonne chance, agent."),
+            "Niveau 4": ("🧩 Mission : Bienvenue dans la Cryptographie !",
+                         "🔐 Un employé d'une grande banque a téléchargé par erreur un fichier exécutable à partir d’un site de streaming. Ce fichier contenait un ransomware qui a chiffré tous les documents confidentiels de l’entreprise. \n💻 Votre mission est cruciale : retracer les étapes de l'attaque pour comprendre comment les données ont été chiffrées, et tenter de retrouver la clé de déchiffrement."),
+            "Niveau 5": ("🎁 Défi Bonus – La Clé Mystère !",
+                         "\nFélicitations ! Pour avoir atteint ce niveau, vous recevez une clé USB cadeau 🎉\nMais attention… dans le monde de la cybersécurité, tout cadeau cache peut-être un piège.\nSerez-vous capable de réagir à temps ? Ou serez-vous victime de votre propre curiosité ? 😅"),
+        }
 
         self.mots_de_passe_niveaux = {
-        "Niveau 1": "cyberIzan@gmail.com",
-        "Niveau 2": "cyber02",
-        "Niveau 3": "FLAG{dns_spoofing_success_resolved_to_attacker_ip}",
-        "Niveau 4": "ThisIsMySecretAESKey1234567890!!",
-        "Niveau 5": "CYber1234"
+            "Niveau 1": "cyberIzan@gmail.com",
+            "Niveau 2": "cyber02",
+            "Niveau 3": "FLAG{dns_spoofing_success_resolved_to_attacker_ip}",
+            "Niveau 4": "ThisIsMySecretAESKey1234567890!!",
+            "Niveau 5": "CYber1234"
         }
 
         self.mots_de_passe_niveaux_incorrect = {
-        "Niveau 1": "cyber01",
-        "Niveau 2": "cyber02",
-        "Niveau 3": "cyber03",
-        "Niveau 4": "cyber04",
-        "Niveau 5": "cyber05"
+            "Niveau 1": "cyber01",
+            "Niveau 2": "cyber02",
+            "Niveau 3": "cyber03",
+            "Niveau 4": "cyber04",
+            "Niveau 5": "cyber05"
+        }
+
+        self.contremesures_niveaux = {
+            "Niveau 1": "Phishing \n Contre-mesures : \n Vérifiez que l’expéditeur du mail est bien celui attendu et que le message semble légitime. \nNe cliquez jamais sur un lien ou une pièce jointe sans être sûr de sa provenance",
+            "Niveau 2": "Contre-mesures OSINT : \n Mettez vos comptes (ex. Instagram) en privé. \n Évitez de publier des informations personnelles, sensibles ou compromettantes. \n Contre-mesures Brute Force : \nN’utilisez pas de données personnelles dans vos mots de passe. \n Créez des mots de passe robustes : majuscules, minuscules, chiffres et caractères spéciaux.",
+            "Niveau 3": "Contre-mesures DNS Spoofing : \n Évitez les connexions à des Wi-Fi publics non sécurisés. \n Vérifiez toujours l’apparence et l’URL des pages web que vous visitez. \n Contre-mesures Reverse Shell : \n Ne lancez jamais de scripts ou de fichiers d’origine inconnue ou douteus",
+            "Niveau 4": "Contre-mesures Clickjacking : \n Faites attention à ce sur quoi vous cliquez, même sur des sites connus. \n Méfiez-vous des téléchargements qui se lancent automatiquement après un clic. \n Contre-mesures Ransomware : \n Ne lancez pas d’exécutables non vérifiés, surtout avec des droits administrateur. \n Surveillez le comportement suspect d’un programme au moment de son lancement.",
+            "Niveau 5": "Contre-mesures : \n Ne branchez jamais une clé USB ou un appareil inconnu à votre ordinateur. \n Désactivez les ports USB ou limitez leur usage si possible."
         }
 
         # Créer un QLabel pour afficher l'image du logo
         self.logo_label = QLabel(self)
-        self.logo_pixmap = QPixmap("C:\\Users\\Goku9\\.vscode\\Gui-Projet\\CyberEscape2.png")  # Remplacez par le chemin réel de votre logo
-        # Redimensionne l'image
+        self.logo_pixmap = QPixmap("C:\\Users\\Goku9\\.vscode\\Gui-Projet\\CyberEscape2")  # Remplacez par le chemin réel de votre logo
+        #"D:\\Gui-Projet\\CyberEscape2.png"
+        #  # Redimensionne l'image
         self.logo_pixmap = self.logo_pixmap.scaled(200, 200, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.logo_label.setPixmap(self.logo_pixmap)
         self.logo_label.setAlignment(Qt.AlignCenter)
@@ -87,14 +102,15 @@ class CyberEscape(QWidget):
             color: white;
             font-weight: bold;
             font-size: 16px;
-                                                                         
+
             border-radius: 17px;
         """))
-        bouton_video.clicked.connect(lambda: self.lancer_video("C:/Users/Goku9/.vscode/Gui-Projet/ILOVE.mp4"))  # remplace par ton chemin
+        bouton_video.clicked.connect(
+            lambda: self.lancer_video("D:\\Gui-Projet\\ILOVE.mp4"))  # remplace par ton chemin
         bouton_video.setToolTip("Vidéo d'explication")
         video_layout = QHBoxLayout()
         video_layout.addWidget(bouton_video)
-        
+
         # Liste des niveaux
         niveaux = ["Niveau 1", "Niveau 2", "Niveau 3", "Niveau 4", "Niveau 5"]
         self.layout_niveaux = QVBoxLayout()
@@ -120,44 +136,50 @@ class CyberEscape(QWidget):
             elif i == 3:  # Niveau 4
                 bouton_niveau.setStyleSheet("background-color: #FFCC33; border-radius: 5px; font-size: 14px;")
                 bouton_niveau.clicked.connect(self.ouvrir_fenetre_niveau4)
-            
+
             else:
                 bouton_niveau.setStyleSheet("background-color: #FFCC33; border-radius: 5px; font-size: 14px;")
-            
+
             label_temps = QLabel(f"Temps :")
             self.labels_temps[niveau] = label_temps
             self.boutons_niveaux[niveau] = bouton_niveau
-            #creation des checkbox
+            # creation des checkbox
             checkbox_valide = QCheckBox()
             checkbox_valide.setText("")  # Laisse vide si tu ne veux pas de texte à côté
 
             # Connecte la vérification au clic (état coché)
-            checkbox_valide.stateChanged.connect(lambda state, n=niveau, cb=checkbox_valide: self.verifier_mot_de_passe(n, cb) if state == Qt.Checked else None)
+            checkbox_valide.stateChanged.connect(
+                lambda state, n=niveau, cb=checkbox_valide: self.verifier_mot_de_passe(n,
+                                                                                       cb) if state == Qt.Checked else None)
 
             bouton_plus = QPushButton("+")
             bouton_plus.setFixedSize(35, 35)
-            bouton_plus.setStyleSheet("background-color: #008CBA; border-radius: 17px; color: white; font-weight: bold; font-size: 16px;")
-            bouton_plus.pressed.connect(lambda btn=bouton_plus: btn.setStyleSheet("background-color: #005f7f; border-radius: 17px; color: white; font-weight: bold; font-size: 16px;"))
-            bouton_plus.released.connect(lambda btn=bouton_plus: btn.setStyleSheet("background-color: #008CBA; border-radius: 17px; color: white; font-weight: bold; font-size: 16px;"))
+            bouton_plus.setStyleSheet(
+                "background-color: #008CBA; border-radius: 17px; color: white; font-weight: bold; font-size: 16px;")
+            bouton_plus.pressed.connect(lambda btn=bouton_plus: btn.setStyleSheet(
+                "background-color: #005f7f; border-radius: 17px; color: white; font-weight: bold; font-size: 16px;"))
+            bouton_plus.released.connect(lambda btn=bouton_plus: btn.setStyleSheet(
+                "background-color: #008CBA; border-radius: 17px; color: white; font-weight: bold; font-size: 16px;"))
 
             bouton_play = QPushButton("▶")
             bouton_play.setFixedSize(35, 35)
-            bouton_play.setStyleSheet("background-color: #FF5733; border-radius: 17px; color: white; font-weight: bold; font-size: 16px;")
-            bouton_play.pressed.connect(lambda btn=bouton_play: btn.setStyleSheet("background-color: #b23c21; border-radius: 17px; color: white; font-weight: bold; font-size: 16px;"))
-            bouton_play.released.connect(lambda btn=bouton_play: btn.setStyleSheet("background-color: #FF5733; border-radius: 17px; color: white; font-weight: bold; font-size: 16px;"))
-            
-            if i == 0:
-                bouton_play.clicked.connect(lambda: self.lancer_video("C:/Users/Goku9/.vscode/Gui-Projet/ILOVE.mp4"))
-            
-            bouton_plus.clicked.connect(lambda checked=False, n=niveau: self.ouvrir_info_niveau(n))
+            bouton_play.setStyleSheet(
+                "background-color: #FF5733; border-radius: 17px; color: white; font-weight: bold; font-size: 16px;")
+            bouton_play.pressed.connect(lambda btn=bouton_play: btn.setStyleSheet(
+                "background-color: #b23c21; border-radius: 17px; color: white; font-weight: bold; font-size: 16px;"))
+            bouton_play.released.connect(lambda btn=bouton_play: btn.setStyleSheet(
+                "background-color: #FF5733; border-radius: 17px; color: white; font-weight: bold; font-size: 16px;"))
 
+            if i == 0:
+                bouton_play.clicked.connect(lambda: self.lancer_video("D:\\Gui-Projet\\ILOVE.mp4"))
+
+            bouton_plus.clicked.connect(lambda checked=False, n=niveau: self.ouvrir_info_niveau(n))
 
             niveau_layout.addWidget(bouton_niveau)
             niveau_layout.addWidget(label_temps)
             niveau_layout.addWidget(checkbox_valide)
             niveau_layout.addWidget(bouton_plus)
             niveau_layout.addWidget(bouton_play)
-            
 
             self.layout_niveaux.addLayout(niveau_layout)
 
@@ -167,6 +189,21 @@ class CyberEscape(QWidget):
         layout_principal.addLayout(self.layout_niveaux)
         layout_principal.addWidget(self.label_chrono)
         self.setLayout(layout_principal)
+
+        # Bouton pour afficher les statistiques finales
+        bouton_stats = QPushButton("Voir mes stats")
+        bouton_stats.setStyleSheet("""
+            background-color: #9C27B0;  /* Violet */
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            border-radius: 8px;
+            padding: 8px;
+        """)
+        bouton_stats.clicked.connect(self.afficher_stats)
+
+        layout_principal.addWidget(bouton_stats)
+
 
     def lancer_video(self, chemin_video):
         self.fenetre_video = FenetreVideo(chemin_video)
@@ -181,25 +218,25 @@ class CyberEscape(QWidget):
             self.temps_debut_niveaux[niveau] = QTime.currentTime()
 
     def mettre_a_jour_chronometre(self):
-            if self.secondes_restantes > 0:
-                self.secondes_restantes -= 1
-                heures = self.secondes_restantes // 3600
-                minutes = (self.secondes_restantes % 3600) // 60
-                secondes = self.secondes_restantes % 60
-                self.label_chrono.setText(f"{heures:02d}:{minutes:02d}:{secondes:02d}")
-            else:
-                self.timer.stop()
-                self.label_chrono.setText("Temps écoulé !")
-                self.label_chrono.setStyleSheet("font-size: 18px; color: gray; font-weight: bold;")
+        if self.secondes_restantes > 0:
+            self.secondes_restantes -= 1
+            heures = self.secondes_restantes // 3600
+            minutes = (self.secondes_restantes % 3600) // 60
+            secondes = self.secondes_restantes % 60
+            self.label_chrono.setText(f"{heures:02d}:{minutes:02d}:{secondes:02d}")
+        else:
+            self.timer.stop()
+            self.label_chrono.setText("Temps écoulé !")
+            self.label_chrono.setStyleSheet("font-size: 18px; color: gray; font-weight: bold;")
 
     def ouvrir_mot_de_passe(self):
-            self.fenetre_mdp = FenetreMotDePasse()
-            self.fenetre_mdp.show()
-
+        self.fenetre_mdp = FenetreMotDePasse()
+        self.fenetre_mdp.show()
 
     def verifier_mot_de_passe(self, niveau, bouton_radio):
         mot_de_passe_correct = self.mots_de_passe_niveaux.get(niveau)
-        mot_de_passe_interdit = self.mots_de_passe_niveaux_incorrect.get(niveau)  # Dictionnaire des mauvais mots de passe
+        mot_de_passe_interdit = self.mots_de_passe_niveaux_incorrect.get(
+            niveau)  # Dictionnaire des mauvais mots de passe
 
         mot_saisi, ok = QInputDialog.getText(
             self,
@@ -272,8 +309,6 @@ class CyberEscape(QWidget):
             QMessageBox.warning(self, "Erreur", "Mot de passe incorrect.")
             bouton_radio.setChecked(False)
 
-    
-
     def ouvrir_formulaire(self):
         self.formulaire = FormulaireInscription()
         self.formulaire.show()
@@ -312,8 +347,39 @@ class CyberEscape(QWidget):
         with open("dictionnaire_instagram.txt", "w") as f:
             for mot in variantes:
                 f.write(mot + "\n")
- 
-     
+
+    def afficher_stats(self):
+        niveaux_valides = 0
+        recap = ""
+
+        # Récapitulatif des résultats par niveau (texte simple, mais on pourrait aussi le faire en HTML)
+        for niveau in self.boutons_niveaux.keys():
+            label_texte = self.labels_temps[niveau].text()
+            if "✔" in label_texte:  # Niveau réussi
+                niveaux_valides += 1
+            recap += f"{niveau} : {label_texte}<br>"
+
+        score_final = f"<br>🏆 Score final : <b>{niveaux_valides} / {len(self.boutons_niveaux)}</b> niveaux validés.<br>"
+        contremesures = "<br><b>🛡️ Contremesures recommandées :</b><br>"
+
+        for niveau in self.boutons_niveaux.keys():
+            label_texte = self.labels_temps[niveau].text()
+
+            # Niveau avec mauvais flag
+            if "✖" in label_texte:
+                contremesures += f'<br><span style="color:red; font-weight:bold;">🔸 {niveau} :<br>{self.contremesures_niveaux.get(niveau, "Pas de contremesures définies.")}</span><br>'
+            # Niveau non réussi ni mauvais flag (échoué ou non tenté)
+            elif "✔" not in label_texte:
+                contremesures += f'<br>🔸 {niveau} :<br>{self.contremesures_niveaux.get(niveau, "Pas de contremesures définies.")}<br>'
+
+        # Afficher dans une QMessageBox avec support HTML
+        msg = QMessageBox(self)
+        msg.setWindowTitle("Statistiques finales")
+        msg.setTextFormat(Qt.TextFormat.RichText)  # Important pour activer le HTML
+        msg.setText(recap + score_final + contremesures)
+        msg.exec_()
+
+
 # Lancer l'application
 app = QApplication([])
 fenetre = CyberEscape()
