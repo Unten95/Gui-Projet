@@ -2,8 +2,8 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHB
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtCore import Qt, QUrl
-from PyQt5.QtCore import QTimer, QTime
+from PyQt5.QtWidgets import QDialog,QScrollArea
+from PyQt5.QtCore import Qt, QUrl, QTimer, QTime
 from fenetreMDP import FenetreMotDePasse
 from PyQt5.QtWidgets import QInputDialog, QMessageBox, QLineEdit, QCheckBox
 from PyQt5.QtGui import QPalette
@@ -41,7 +41,7 @@ class CyberEscape(QWidget):
         }
 
         self.mots_de_passe_niveaux = {
-            "Niveau 1": "cyberIzan@gmail.com",
+            "Niveau 1": "cyberizan@gmail.com",
             "Niveau 2": "cyber02",
             "Niveau 3": "FLAG{dns_spoofing_success_resolved_to_attacker_ip}",
             "Niveau 4": "ThisIsMySecretAESKey1234567890!!",
@@ -57,18 +57,47 @@ class CyberEscape(QWidget):
         }
 
         self.contremesures_niveaux = {
-            "Niveau 1": "Phishing \n Contre-mesures : \n Vérifiez que l’expéditeur du mail est bien celui attendu et que le message semble légitime. \nNe cliquez jamais sur un lien ou une pièce jointe sans être sûr de sa provenance",
-            "Niveau 2": "Contre-mesures OSINT : \n Mettez vos comptes (ex. Instagram) en privé. \n Évitez de publier des informations personnelles, sensibles ou compromettantes. \n Contre-mesures Brute Force : \nN’utilisez pas de données personnelles dans vos mots de passe. \n Créez des mots de passe robustes : majuscules, minuscules, chiffres et caractères spéciaux.",
-            "Niveau 3": "Contre-mesures DNS Spoofing : \n Évitez les connexions à des Wi-Fi publics non sécurisés. \n Vérifiez toujours l’apparence et l’URL des pages web que vous visitez. \n Contre-mesures Reverse Shell : \n Ne lancez jamais de scripts ou de fichiers d’origine inconnue ou douteus",
-            "Niveau 4": "Contre-mesures Clickjacking : \n Faites attention à ce sur quoi vous cliquez, même sur des sites connus. \n Méfiez-vous des téléchargements qui se lancent automatiquement après un clic. \n Contre-mesures Ransomware : \n Ne lancez pas d’exécutables non vérifiés, surtout avec des droits administrateur. \n Surveillez le comportement suspect d’un programme au moment de son lancement.",
-            "Niveau 5": "Contre-mesures : \n Ne branchez jamais une clé USB ou un appareil inconnu à votre ordinateur. \n Désactivez les ports USB ou limitez leur usage si possible."
+            "Niveau 1": """~~ Phishing : <br> 
+            - Vérifiez que l’expéditeur du mail est bien celui attendu et que le message semble légitime. <br> 
+            - Ne cliquez jamais sur un lien ou une pièce jointe sans être sûr de sa provenance. <br> 
+            <a href="https://www.cybermalveillance.gouv.fr/tous-nos-contenus/fiches-reflexes/hameconnage-phishing">➜ En savoir plus sur le phishing</a>""",
+
+            "Niveau 2": """~~ OSINT : <br> 
+            - Mettez vos comptes (ex. Instagram) en privé. <br> 
+            - Évitez de publier des informations personnelles, sensibles ou compromettantes. <br> 
+            ~~ Brute Force : <br> 
+            - N’utilisez pas de données personnelles dans vos mots de passe. <br> 
+            - Créez des mots de passe robustes : majuscules, minuscules, chiffres et caractères spéciaux. <br> 
+            <a href="https://www.cybermalveillance.gouv.fr/tous-nos-contenus/actualites/conseils-mot-de-passe">➜ Conseils pour des mots de passe sécurisés</a>""",
+
+            "Niveau 3": """~~ DNS Spoofing : <br> 
+            - Évitez les connexions à des Wi-Fi publics non sécurisés. <br> 
+            - Vérifiez toujours l’apparence et l’URL des pages web que vous visitez. <br> 
+            ~~ Reverse Shell : <br> 
+            - Ne lancez jamais de scripts ou de fichiers d’origine inconnue ou douteuse. <br> 
+            <a href="https://www.cert.ssi.gouv.fr/">➜ Bonnes pratiques générales (ANSSI)</a>""",
+
+            "Niveau 4": """~~ Clickjacking : <br> 
+            - Faites attention à ce sur quoi vous cliquez, même sur des sites connus. <br> 
+            - Méfiez-vous des téléchargements qui se lancent automatiquement après un clic. <br> 
+            ~~ Ransomware : <br> 
+            - Ne lancez pas d’exécutables non vérifiés, surtout avec des droits administrateur. <br> 
+            - Surveillez le comportement suspect d’un programme au moment de son lancement. <br> 
+            <a href="https://www.cybermalveillance.gouv.fr/tous-nos-contenus/fiches-reflexes/ransomware-rancongiciel">➜ Se protéger contre les ransomware</a>""",
+
+            "Niveau 5": """~~ HackyPi : <br> 
+            - Ne branchez jamais une clé USB ou un appareil inconnu à votre ordinateur. <br> 
+            - Désactivez les ports USB ou limitez leur usage si possible. <br> 
+            <a href="https://www.cybermalveillance.gouv.fr/">➜ Plus de conseils sur la sécurité informatique</a>"""
+
+
         }
 
         # Créer un QLabel pour afficher l'image du logo
         self.logo_label = QLabel(self)
-        self.logo_pixmap = QPixmap("C:\\Users\\Goku9\\.vscode\\Gui-Projet\\CyberEscape2")  # Remplacez par le chemin réel de votre logo
-        #"D:\\Gui-Projet\\CyberEscape2.png"
-        #  # Redimensionne l'image
+        self.logo_pixmap = QPixmap(
+            "C:\\Users\\Goku9\\.vscode\\Gui-Projet\\CyberEscape2.png")  # Remplacez par le chemin réel de votre logo
+        # Redimensionne l'image
         self.logo_pixmap = self.logo_pixmap.scaled(200, 200, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.logo_label.setPixmap(self.logo_pixmap)
         self.logo_label.setAlignment(Qt.AlignCenter)
@@ -348,14 +377,14 @@ class CyberEscape(QWidget):
             for mot in variantes:
                 f.write(mot + "\n")
 
+   
     def afficher_stats(self):
         niveaux_valides = 0
         recap = ""
 
-        # Récapitulatif des résultats par niveau (texte simple, mais on pourrait aussi le faire en HTML)
         for niveau in self.boutons_niveaux.keys():
             label_texte = self.labels_temps[niveau].text()
-            if "✔" in label_texte:  # Niveau réussi
+            if "✔" in label_texte:
                 niveaux_valides += 1
             recap += f"{niveau} : {label_texte}<br>"
 
@@ -364,20 +393,36 @@ class CyberEscape(QWidget):
 
         for niveau in self.boutons_niveaux.keys():
             label_texte = self.labels_temps[niveau].text()
-
-            # Niveau avec mauvais flag
             if "✖" in label_texte:
                 contremesures += f'<br><span style="color:red; font-weight:bold;">🔸 {niveau} :<br>{self.contremesures_niveaux.get(niveau, "Pas de contremesures définies.")}</span><br>'
-            # Niveau non réussi ni mauvais flag (échoué ou non tenté)
             elif "✔" not in label_texte:
                 contremesures += f'<br>🔸 {niveau} :<br>{self.contremesures_niveaux.get(niveau, "Pas de contremesures définies.")}<br>'
 
-        # Afficher dans une QMessageBox avec support HTML
-        msg = QMessageBox(self)
-        msg.setWindowTitle("Statistiques finales")
-        msg.setTextFormat(Qt.TextFormat.RichText)  # Important pour activer le HTML
-        msg.setText(recap + score_final + contremesures)
-        msg.exec_()
+        contenu_html = recap + score_final + contremesures
+
+        # Création d'une QDialog avec QScrollArea
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Statistiques finales")
+        layout = QVBoxLayout(dialog)
+
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+
+        contenu_widget = QLabel()
+        contenu_widget.setTextFormat(Qt.TextFormat.RichText)
+        contenu_widget.setText(contenu_html)
+        contenu_widget.setWordWrap(True)
+
+        scroll_area.setWidget(contenu_widget)
+
+        bouton_fermer = QPushButton("Fermer")
+        bouton_fermer.clicked.connect(dialog.close)
+
+        layout.addWidget(scroll_area)
+        layout.addWidget(bouton_fermer)
+
+        dialog.resize(500, 400)  # Dimensions de la fenêtre avec scroll
+        dialog.exec_()
 
 
 # Lancer l'application
