@@ -1,0 +1,13 @@
+----- VOS FICHIERS ONT ÉTÉ CHIFFRÉS -----
+
+Tous vos fichiers personnels ont été chiffrés à l’aide d’un algorithme sécurisé.
+
+Pour récupérer vos fichiers :
+1. Envoyez 1 Bitcoin à l’adresse suivante : 1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX
+2. Envoyez un email avec la preuve de paiement à : restore@protonmail.com
+3. Vous recevrez une clé de déchiffrement.
+
+Vous avez 24 heures. Passé ce délai, tous vos fichiers seront supprimés.
+Ne contactez les autorités.
+
+--- RANSOMWARE LOCKER TEAM ---
